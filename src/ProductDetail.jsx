@@ -1,7 +1,9 @@
-import React from 'react';
+import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { ShopContext } from './App';
 
-const ProductDetails = ({ products }) => {
+const ProductDetails = () => {
+  const { products } = useContext(ShopContext);
   const { id } = useParams();
   const product = products.find(product => product.id === parseInt(id));
 

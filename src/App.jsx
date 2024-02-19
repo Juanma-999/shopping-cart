@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useState, createContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './Home';
 import Cart from './Cart';
 import ProductDetails from './ProductDetail';
 import products from './products';
+
+export const ShopContext = createContext({
+  products: [],
+  cartItems: [],
+  addToCart: () => {},
+  removeFromCart: () => {},
+});
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -12,19 +19,26 @@ function App() {
     setCart([...cart, product]);
   };
 
-  return (
-    <Router>
-      <div>
-        <Link to="/">Home</Link>
-        <Link to="/cart">Cart</Link>
-      </div>
+  const removeFromCart = (productId) => {
+    const updatedCart = cart.filter(product => product.id !== productId);
+    setCart(updatedCart);
+  };
 
-      <Routes>
-        <Route path="/" element={<Home products={products} addToCart={addToCart} />} />
-        <Route path="/cart" element={<Cart cart={cart} />} />
-        <Route path="/products/:id" element={<ProductDetails products={products} />} />
-      </Routes>
-    </Router>
+  return (
+    <ShopContext.Provider value={{ cart, products, addToCart, removeFromCart }}>
+      <Router>
+        <div>
+          <Link to="/">Home</Link>
+          <Link to="/cart">Cart</Link>
+        </div>
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
+        </Routes>
+      </Router>
+    </ShopContext.Provider>
   );
 }
 
